@@ -55,7 +55,7 @@ def insert_row_in_eat_sum_log_table(db_name, name, sum):
             with connection.cursor() as cursor:
                 sql = """
                 INSERT INTO eat_sum_log
-                (name, sum)
+                (name, eat_sum)
                 VALUES(%s, %s)
                 """
                 VALUES = (name,sum)
