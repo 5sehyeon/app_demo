@@ -48,20 +48,20 @@ def insert_row_in_zumoon_log_table(db_name, name, menu, cup):
     else:
         app.logger.info(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
         
-def insert_row_in_eat_sum_table(db_name, name, sum):
+def insert_row_in_eat_sum_log_table(db_name, name, sum):
     connection = connect_to_database(db_name)
     if connection:
         try:
             with connection.cursor() as cursor:
                 sql = """
-                INSERT INTO eat_sum
+                INSERT INTO eat_sum_log
                 (name, sum)
                 VALUES(%s, %s)
                 """
                 VALUES = (name,sum)
                 cursor.execute(sql,VALUES)
                 connection.commit()
-                app.logger.info("eat_sum 테이블에 row가 성공적으로 삽입되었습니다.")
+                app.logger.info("eat_sum_log 테이블에 row가 성공적으로 삽입되었습니다.")
         except Exception as e:
             app.logger.info(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
         finally:
@@ -116,7 +116,7 @@ def menu_order():
     sum = data.get('sum')
     app.logger.info(f"이름은 {name} 먹은금액은 {sum}")
     
-    insert_row_in_eat_sum_table("app_demo",name,sum)
+    insert_row_in_eat_sum_log_table("app_demo",name,sum)
     
     return jsonify({'name' : name})
     
