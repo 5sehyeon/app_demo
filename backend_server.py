@@ -8,7 +8,7 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 AWS_RDS_INSTANCE_LOGIN = {
-    'host' : 'test-database.cj40aism4clv.ap-southeast-2.rds.amazonaws.com',
+    'host' : 'gcc-app.cv2aemsqejer.ap-northeast-2.rds.amazonaws.com',
     'user' : 'admin',
     'password' : 'nx12131213!',
     'port' : 3306
@@ -27,13 +27,13 @@ def connect_to_database(db_name):
     except Exception as e:
         return None
 
-def insert_row_in_info_table(db_name, user_id, suppli_info_id,i):
+def insert_row_in_zumoon_log_table(db_name, user_id, suppli_info_id,i):
     connection = connect_to_database(db_name)
     if connection:
         try:
             with connection.cursor() as cursor:
                 sql = """
-                INSERT INTO info
+                INSERT INTO zumoon_log
                 (name, menu, cup)
                 VALUES(%s, %s, %s)
                 """
@@ -77,7 +77,7 @@ def menu_order():
     cup = data.get('cup')
     app.logger.info(f"이름은 {name} 메뉴는 {menu} 수량은 {cup}")
     
-    insert_row_in_info_table("app_demo",name,menu,cup)
+    insert_row_in_zumoon_log_table("app_demo",name,menu,cup)
     
     return jsonify({'name' : name})
     
