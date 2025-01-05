@@ -8,7 +8,7 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 AWS_RDS_INSTANCE_LOGIN = {
-    'host' : 'gcc-app.cv2aemsqejer.ap-northeast-2.rds.amazonaws.com',
+    'host' : 'database-1.cv2aemsqejer.ap-northeast-2.rds.amazonaws.com',
     'user' : 'admin',
     'password' : 'nx12131213!',
     'port' : 3306
@@ -27,26 +27,26 @@ def connect_to_database(db_name):
     except Exception as e:
         return None
 
-def insert_row_in_zumoon_log_table(db_name, name, menu, cup):
+def query_info(db_name,name):
     connection = connect_to_database(db_name)
     if connection:
         try:
             with connection.cursor() as cursor:
-                sql = """
-                INSERT INTO zumoon_log
-                (name, menu, cup)
-                VALUES(%s, %s, %s)
+                sql = f"""
+                SELECT 남은선물
+                FROM main
+                WHERE 이름 = %s
                 """
-                VALUES = (name,menu,cup)
-                cursor.execute(sql,VALUES)
-                connection.commit()
-                app.logger.info("zumoon_log 테이블에 row가 성공적으로 삽입되었습니다.")
+                cursor.execute(sql,(name,))
+                row = cursor.fetchall()
+                ## 이부분을 수정
+                return row[0][0]
         except Exception as e:
-            app.logger.info(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
+            print(f'{e} 이러한 오류 때문에, query에 실패하였습니다.')
         finally:
             connection.close()
     else:
-        app.logger.info(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
         
 def insert_row_in_eat_sum_log_table(db_name, name, sum):
     connection = connect_to_database(db_name)
@@ -119,6 +119,15 @@ def menu_order():
     insert_row_in_eat_sum_log_table("app_demo",name,sum)
     
     return jsonify({'name' : name})
+
+
+@app.route('/finall', methods=['POST'])
+def finall():
+    data = request.get_json()
+    name = data.get('name')
+    gift = query_info("gcc_공감",name)
+    return jsonify({"gift" : gift})
+
     
     
 
