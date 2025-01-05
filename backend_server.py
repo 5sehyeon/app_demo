@@ -40,7 +40,7 @@ def query_info(db_name,name):
                 cursor.execute(sql,(name,))
                 row = cursor.fetchall()
                 ## 이부분을 수정
-                return row[0][0]
+                return row[0]
         except Exception as e:
             print(f'{e} 이러한 오류 때문에, query에 실패하였습니다.')
         finally:
@@ -125,6 +125,7 @@ def menu_order():
 def finall():
     data = request.get_json()
     name = data.get('name')
+    print(name)
     gift = query_info("gcc_공감",name)
     return jsonify({"gift" : gift})
 
