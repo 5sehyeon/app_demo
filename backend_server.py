@@ -40,7 +40,7 @@ def query_info(db_name,name):
                 cursor.execute(sql,(name,))
                 row = cursor.fetchall()
                 ## 이부분을 수정
-                return row[0]
+                return row[0][0]
         except Exception as e:
             print(f'{e} 이러한 오류 때문에, query에 실패하였습니다.')
         finally:
@@ -48,26 +48,25 @@ def query_info(db_name,name):
     else:
         print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
         
-def insert_row_in_eat_sum_log_table(db_name, name, sum):
+def query_pay(db_name):
     connection = connect_to_database(db_name)
     if connection:
         try:
             with connection.cursor() as cursor:
-                sql = """
-                INSERT INTO eat_sum_log
-                (name, eat_sum)
-                VALUES(%s, %s)
+                sql = f"""
+                SELECT 금액
+                FROM pay_sum
                 """
-                VALUES = (name,sum)
-                cursor.execute(sql,VALUES)
-                connection.commit()
-                app.logger.info("eat_sum_log 테이블에 row가 성공적으로 삽입되었습니다.")
+                cursor.execute(sql)
+                row = cursor.fetchall()
+                ## 이부분을 수정
+                return row[0][0]
         except Exception as e:
-            app.logger.info(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
+            print(f'{e} 이러한 오류 때문에, query에 실패하였습니다.')
         finally:
             connection.close()
     else:
-        app.logger.info(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
         
 
 @app.route('/login_button_click', methods=['POST'])
@@ -109,25 +108,19 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
 """
 
-@app.route('/menu_order', methods=['POST'])
-def menu_order():
-    data = request.get_json()
-    name = data.get('name')
-    sum = data.get('sum')
-    app.logger.info(f"이름은 {name} 먹은금액은 {sum}")
-    
-    insert_row_in_eat_sum_log_table("app_demo",name,sum)
-    
-    return jsonify({'name' : name})
 
 
 @app.route('/finall', methods=['POST'])
 def finall():
     data = request.get_json()
     name = data.get('name')
-    print(name)
     gift = query_info("gcc_공감",name)
     return jsonify({"gift" : gift})
+
+@app.route('/pay', methods=['POST'])
+def pay():
+    pay = query_pay("gcc_공감")
+    return jsonify({"pay" : pay})
 
     
     
