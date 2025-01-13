@@ -53,7 +53,7 @@ def query_pay(db_name):
     if connection:
         try:
             with connection.cursor() as cursor:
-                sql = f"""
+                sql = """
                 SELECT 금액
                 FROM pay_sum
                 """
@@ -69,6 +69,66 @@ def query_pay(db_name):
         print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
         
 
+def update_pay_table(db_name,pay):
+    connection = connect_to_database(db_name)
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                sql = f"""
+                UPDATE pay_sum
+                SET 금액 = %s
+                where id = 1
+                """
+                cursor.execute(sql,(pay,))
+                connection.commit()
+                print("pay_sum 테이블에 row가 성공적으로 삽입되었습니다.")
+        except Exception as e:
+            print(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
+        finally:
+            connection.close()
+    else:
+        print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        
+def update_main_table(db_name,gift,name):
+    connection = connect_to_database(db_name)
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                sql = f"""
+                UPDATE main
+                SET 남은선물 = %s
+                where 이름 = %s
+                """
+                cursor.execute(sql,(gift,name,))
+                connection.commit()
+                print("main 테이블에 row가 성공적으로 삽입되었습니다.")
+        except Exception as e:
+            print(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
+        finally:
+            connection.close()
+    else:
+        print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        
+def update_main_table_2(db_name,most,name):
+    connection = connect_to_database(db_name)
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                sql = f"""
+                UPDATE main
+                SET 내야할 = %s
+                where 이름 = %s
+                """
+                cursor.execute(sql,(most,name,))
+                connection.commit()
+                print("main 테이블에 row가 성공적으로 삽입되었습니다.")
+        except Exception as e:
+            print(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
+        finally:
+            connection.close()
+    else:
+        print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        
 @app.route('/login_button_click', methods=['POST'])
 def login_button_click():
     data = request.get_json()
@@ -122,7 +182,28 @@ def pay():
     pay = query_pay("gcc_공감")
     return jsonify({"pay" : pay})
 
+@app.route('/pay_to_db',methods=['POST'])
+def pay_to_db():
+    data = request.get_json()
+    pay_data = data.get('pay')
+    update_pay_table("gcc_공감",pay_data)
+    return jsonify({"pay" : pay_data})
     
+@app.route('/gift_to_db',methods=['POST'])
+def gift_to_db():
+    data = request.get_json()
+    gift = data.get('gift')
+    name = data.get('name')
+    update_main_table("gcc_공감",gift,name)
+    return jsonify({"name" : name})
+
+@app.route('/most_to_db',methods=['POST'])
+def gift_to_db():
+    data = request.get_json()
+    most = data.get('most')
+    name = data.get('name')
+    update_main_table_2("gcc_공감",most,name)
+    return jsonify({"name" : name})
     
 
 if __name__ == '__main__':
