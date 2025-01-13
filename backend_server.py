@@ -198,7 +198,7 @@ def gift_to_db():
     return jsonify({"name" : name})
 
 @app.route('/most_to_db',methods=['POST'])
-def gift_to_db():
+def most_to_db():
     data = request.get_json()
     most = data.get('most')
     name = data.get('name')
