@@ -130,17 +130,17 @@ def update_main_table_2(db_name,most,name):
         print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
         
 
-def insert_jumoon_log_table(db_name,name,log):
+def insert_jumoon_log_table(db_name,log):
     connection = connect_to_database(db_name)
     if connection:
         try:
             with connection.cursor() as cursor:
                 sql = """
                 INSERT INTO jumoon_log
-                (이름, 메뉴)
-                VALUES(%s, %s)
+                (기록)
+                VALUES(%s)
                 """
-                VALUES = (name,log)
+                VALUES = (log)
                 cursor.execute(sql,VALUES)
                 connection.commit()
                 print("user_login 테이블에 row가 성공적으로 삽입되었습니다.")
@@ -150,6 +150,32 @@ def insert_jumoon_log_table(db_name,name,log):
             connection.close()
     else:
         print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        
+        
+        
+def query_log(db_name):
+    connection = connect_to_database(db_name)
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                sql = """
+                SELECT 기록 FROM jumoon_log
+                """
+                cursor.execute(sql)
+                row = cursor.fetchall()
+                c = []
+                for i in row:
+                    c.append(i[0])
+                    
+                return c
+        except Exception as e:
+            print(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
+        finally:
+            connection.close()
+    else:
+        print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        
+        
         
 @app.route('/login_button_click', methods=['POST'])
 def login_button_click():
@@ -230,10 +256,16 @@ def most_to_db():
 @app.route('/log_to_db',methods=['POST'])
 def log_to_db():
     data = request.get_json()
-    name = data.get('name')
     log = data.get('log')
-    insert_jumoon_log_table('gcc_공감', name, log)
-    return jsonify({"name" : name})
+    insert_jumoon_log_table('gcc_공감',log)
+    return jsonify({"name" : log})
+
+@app.route('/log', methods=['POST'])
+def log():
+    log = query_log("gcc_공감")
+    return jsonify({"log" : log})
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
