@@ -129,6 +129,28 @@ def update_main_table_2(db_name,most,name):
     else:
         print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
         
+
+def insert_jumoon_log_table(db_name,name,log):
+    connection = connect_to_database(db_name)
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                sql = """
+                INSERT INTO jumoon_log
+                (이름, 메뉴)
+                VALUES(%s, %s)
+                """
+                VALUES = (name,log)
+                cursor.execute(sql,VALUES)
+                connection.commit()
+                print("user_login 테이블에 row가 성공적으로 삽입되었습니다.")
+        except Exception as e:
+            print(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
+        finally:
+            connection.close()
+    else:
+        print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        
 @app.route('/login_button_click', methods=['POST'])
 def login_button_click():
     data = request.get_json()
@@ -204,7 +226,14 @@ def most_to_db():
     name = data.get('name')
     update_main_table_2("gcc_공감",most,name)
     return jsonify({"name" : name})
-    
+
+@app.route('/log_to_db',methods=['POST'])
+def log_to_db():
+    data = request.get_json()
+    name = data.get('name')
+    log = data.get('log')
+    insert_jumoon_log_table('gcc_공감', name, log)
+    return jsonify({"name" : name})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
