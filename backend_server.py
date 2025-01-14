@@ -116,7 +116,7 @@ def update_main_table_2(db_name,most,name):
             with connection.cursor() as cursor:
                 sql = f"""
                 UPDATE main
-                SET 내야할 = %s
+                SET 내야할 = 내야할 + %s
                 where 이름 = %s
                 """
                 cursor.execute(sql,(most,name,))
