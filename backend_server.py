@@ -7,6 +7,9 @@ import pymysql
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app, cors_allowed_origins="*")
+
 AWS_RDS_INSTANCE_LOGIN = {
     'host' : 'database-1.cv2aemsqejer.ap-northeast-2.rds.amazonaws.com',
     'user' : 'admin',
@@ -266,6 +269,10 @@ def log():
     return jsonify({"log" : log})
 
 
+@socketio.on('message_from_A')
+def handle_message_from_a(data):
+    print(f"Received from A: {data}")
+    emit('message_to_B', data, broadcast=True)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000)
