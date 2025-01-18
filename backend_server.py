@@ -3,9 +3,13 @@ from flask_socketio import SocketIO, emit
 from datetime import datetime
 import logging
 import pymysql
+from flask_cors import CORS
+
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
+
+CORS(app)
 
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
