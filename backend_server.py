@@ -271,8 +271,12 @@ def log():
 
 @socketio.on('message_from_A')
 def handle_message_from_a(data):
-    print(f"Received from A: {data}")
+    print(f"Received data: {data}")
+    if data:
+        print("Data received successfully")
+    else:
+        print("No data received")
     emit('message_to_B', data, broadcast=True)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
