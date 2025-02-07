@@ -280,12 +280,12 @@ def temp():
     data = request.get_json()
     jumoon = data.get('jumoon')
     jumoon_log.append(jumoon)
+    print(jumoon_log)
     return jsonify({"jumoon" : jumoon})
 
 @app.route('/to_B', methods=['GET'])
 def to_B():
     return jsonify(jumoon_log)
-
 
 
 
