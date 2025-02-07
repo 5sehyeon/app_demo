@@ -4,6 +4,7 @@ import logging
 import pymysql
 from flask_cors import CORS
 
+jumoon_log = []
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -272,6 +273,20 @@ def log_to_db():
 def log():
     log = query_log("gcc_공감")
     return jsonify({"log" : log})
+
+@app.route('/temp', methods=['POST'])
+def temp():
+    global jumoon_log
+    data = request.get_json()
+    jumoon = data.get('jumoon')
+    jumoon_log.append(jumoon)
+    return jsonify({"jumoon" : jumoon})
+
+@app.route('/to_B', methods=['GET'])
+def to_B():
+    return jsonify(jumoon_log)
+
+
 
 
 """
