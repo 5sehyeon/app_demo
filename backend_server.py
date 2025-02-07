@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from flask_socketio import SocketIO, emit
 from datetime import datetime
 import logging
 import pymysql
@@ -11,8 +10,10 @@ logging.basicConfig(level=logging.DEBUG)
 
 CORS(app)
 
+"""
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
+"""
 
 AWS_RDS_INSTANCE_LOGIN = {
     'host' : 'database-1.cv2aemsqejer.ap-northeast-2.rds.amazonaws.com',
@@ -273,6 +274,7 @@ def log():
     return jsonify({"log" : log})
 
 
+"""
 @socketio.on('message_from_A')
 def handle_message_from_a(data):
     print(f"Received data: {data}")
@@ -281,6 +283,7 @@ def handle_message_from_a(data):
     else:
         print("No data received")
     emit('message_to_B', data, broadcast=True)
+"""
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', debug=True, port=5000)
