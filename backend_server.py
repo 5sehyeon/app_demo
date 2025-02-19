@@ -1,10 +1,9 @@
 from flask import Flask, request, jsonify
-from datetime import datetime
 import logging
 import pymysql
 from flask_cors import CORS
 
-jumoon_log = []
+check = '0'
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -276,16 +275,24 @@ def log():
 
 @app.route('/temp', methods=['POST'])
 def temp():
-    global jumoon_log
+    global check
     data = request.get_json()
     jumoon = data.get('jumoon')
-    jumoon_log.append(jumoon)
-    print(jumoon_log)
+    check = jumoon
     return jsonify({"jumoon" : jumoon})
 
 @app.route('/to_B', methods=['GET'])
 def to_B():
-    return jsonify(jumoon_log)
+    return jsonify(check)
+
+@app.route('/reset', methods=['POST'])
+def reset():
+    global check
+    data = request.get_json()
+    reset = data.get('reset')
+    check - '0'
+    return jsonify({'reset' : reset})
+    
 
 
 
