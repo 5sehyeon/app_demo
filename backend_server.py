@@ -197,7 +197,28 @@ def update_ok(db_name,state):
                 """
                 cursor.execute(sql,(state,))
                 connection.commit()
-                print("pay_sum 테이블에 row가 성공적으로 삽입되었습니다.")
+                print("jumoon_log 테이블에 state가 성공적으로 삽입되었습니다.")
+        except Exception as e:
+            print(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
+        finally:
+            connection.close()
+    else:
+        print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        
+
+def update_no(db_name,state):
+    connection = connect_to_database(db_name)
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                sql = f"""
+                UPDATE jumoon_log
+                SET 상태 = '거절'
+                where 기록 = %s
+                """
+                cursor.execute(sql,(state,))
+                connection.commit()
+                print("jumoon_log 테이블에 state가 성공적으로 삽입되었습니다.")
         except Exception as e:
             print(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
         finally:
@@ -329,6 +350,7 @@ def ok():
 def no():
     data = request.get_json()
     state = data.get('state')
+    update_no('gcc_공감',state)
     return jsonify({'reset' : state})
 
 
