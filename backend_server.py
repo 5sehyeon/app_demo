@@ -167,13 +167,13 @@ def query_log(db_name):
         try:
             with connection.cursor() as cursor:
                 sql = """
-                SELECT 기록 FROM jumoon_log
+                SELECT 기록, 상태 FROM jumoon_log
                 """
                 cursor.execute(sql)
                 row = cursor.fetchall()
                 c = []
                 for i in row:
-                    c.append(i[0])
+                    c.append((i[0], i[1]))  # 튜플 형태로 추가
                     
                 return c
         except Exception as e:
