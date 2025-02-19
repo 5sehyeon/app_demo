@@ -342,7 +342,6 @@ def temp():
     data = request.get_json()
     jumoon = data.get('jumoon')
     check = jumoon
-    print(check)
     return jsonify({"jumoon" : jumoon})
 
 @app.route('/to_B', methods=['GET'])
@@ -355,7 +354,6 @@ def reset():
     data = request.get_json()
     reset = data.get('reset')
     check = '0'
-    print(check)
     return jsonify({'reset' : reset})
     
 @app.route('/ok', methods=['POST'])
