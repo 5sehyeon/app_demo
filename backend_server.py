@@ -184,6 +184,28 @@ def query_log(db_name):
         print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
         
         
+
+def update_ok(db_name,state):
+    connection = connect_to_database(db_name)
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                sql = f"""
+                UPDATE jumoon_log
+                SET 상태 = '완료'
+                where 기록 = %S
+                """
+                cursor.execute(sql,(state))
+                connection.commit()
+                print("pay_sum 테이블에 row가 성공적으로 삽입되었습니다.")
+        except Exception as e:
+            print(f'{e} 이러한 오류 때문에, row 삽입에 실패하였습니다.')
+        finally:
+            connection.close()
+    else:
+        print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        
+        
         
 @app.route('/login_button_click', methods=['POST'])
 def login_button_click():
@@ -295,7 +317,19 @@ def reset():
     print(check)
     return jsonify({'reset' : reset})
     
-
+@app.route('/ok', methods=['POST'])
+def ok():
+    data = request.get_json()
+    state = data.get('state')
+    update_ok('gcc_공감',state)
+    return jsonify({'reset' : state})
+    
+    
+@app.route('/no', methods=['POST'])
+def no():
+    data = request.get_json()
+    state = data.get('state')
+    return jsonify({'reset' : state})
 
 
 """
