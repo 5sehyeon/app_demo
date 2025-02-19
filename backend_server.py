@@ -193,9 +193,9 @@ def update_ok(db_name,state):
                 sql = f"""
                 UPDATE jumoon_log
                 SET 상태 = '완료'
-                where 기록 = %S
+                where 기록 = %s
                 """
-                cursor.execute(sql,(state))
+                cursor.execute(sql,(state,))
                 connection.commit()
                 print("pay_sum 테이블에 row가 성공적으로 삽입되었습니다.")
         except Exception as e:
