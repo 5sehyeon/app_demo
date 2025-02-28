@@ -268,6 +268,29 @@ def update_pay(db_name,pay):
         print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
         
         
+
+def query_state(db_name,log):
+    connection = connect_to_database(db_name)
+    if connection:
+        try:
+            with connection.cursor() as cursor:
+                sql = f"""
+                SELECT 상태
+                FROM jumoon_log
+                WHERE 기록 = %s
+                """
+                cursor.execute(sql,(log,))
+                row = cursor.fetchall()
+                ## 이부분을 수정
+                return row[0][0]
+        except Exception as e:
+            print(f'{e} 이러한 오류 때문에, query에 실패하였습니다.')
+        finally:
+            connection.close()
+    else:
+        print(f"{db_name} 데이터 베이스 연결에 실패하였습니다.")
+        
+        
         
 @app.route('/login_button_click', methods=['POST'])
 def login_button_click():
@@ -408,6 +431,14 @@ def to_pay():
     update_pay('gcc_공감',pay)
     return jsonify({'reset' : pay})
 
+
+
+@app.route('/fetch_state', methods=['POST'])
+def fetch_state():
+    data = request.get_json()
+    log = data.get('log')
+    state = query_state("gcc_공감",log)
+    return jsonify({"state" : state})
 
 """
 @socketio.on('message_from_A')
