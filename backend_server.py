@@ -1,14 +1,14 @@
 from flask import Flask, request, jsonify
 import logging
 import pymysql
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 check = '0'
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 """
 app.config['SECRET_KEY'] = 'secret!'
@@ -434,6 +434,7 @@ def to_pay():
 
 
 @app.route('/fetch_state', methods=['POST'])
+@cross_origin()
 def fetch_state():
     data = request.get_json()
     log = data.get('log')
