@@ -437,7 +437,9 @@ def to_pay():
 def fetch_state():
     data = request.get_json()
     log = data.get('log')
-    print(log)
+    print("만약 변수값이 NULL이라면",None)
+    print("만약 변수값이 \'\'이라면", '')
+    print(f'만약 변수값이 log라면 {log}')
     state = query_state("gcc_공감",log)
     return jsonify({"state" : state})
 
