@@ -437,6 +437,7 @@ def to_pay():
 def fetch_state():
     data = request.get_json()
     log = data.get('log')
+    print(log)
     state = query_state("gcc_공감",log)
     return jsonify({"state" : state})
 
