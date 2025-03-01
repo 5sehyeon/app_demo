@@ -438,8 +438,6 @@ def to_pay():
 def fetch_state():
     data = request.get_json()
     log = data.get('log')
-    print("만약 변수값이 NULL이라면",None)
-    print("만약 변수값이 \'\'이라면", '')
     print(f'만약 변수값이 log라면 {log}')
     state = query_state("gcc_공감",log)
     return jsonify({"state" : state})
@@ -454,6 +452,13 @@ def handle_message_from_a(data):
         print("No data received")
     emit('message_to_B', data, broadcast=True)
 """
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')  # 모든 도메인 허용
+    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
